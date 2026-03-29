@@ -16,46 +16,39 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
 fi
 
+wait_step() {
+    echo "Waiting..."
+    sleep 5
+}
+
 # 1. Clear any existing errors on the drive
 candletool md clear --id "$CAN_ID"
-
-sleep 2
+wait_step
 
 # 2. Log the current version of the MD device
 candletool md version --id "$CAN_ID"
-
-sleep 2
+wait_step
 
 # 3. Update firmware to the latest version
 candletool md update latest --recovery --id "$CAN_ID"
-
-echo "Waiting..."
-sleep 5
+wait_step
 
 # 4. Reboot the device
 candletool md reset --id "$CAN_ID"
+wait_step
 
-echo "Waiting..."
-sleep 5
-
-# 5. Apply the configuration file 
+# 5. Apply the configuration file
 candletool md config upload "$CONFIG_FILE" --id "$CAN_ID"
-
-echo "Waiting..."
-sleep 5
+wait_step
 
 # 6. Save the base configuration to the MD80's flash memory
 candletool md save --id "$CAN_ID"
-
-echo "Waiting..."
-sleep 5
+wait_step
 
 # 7. Run the full calibration sequence
 # WARNING: Ensure the motor shaft is completely free of any load before this runs!
 candletool md calibration --id "$CAN_ID"
-
-echo "Waiting..."
-sleep 5
+wait_step
 
 # 8. Save again to store the newly calculated calibration offsets to flash memory
 candletool md save --id "$CAN_ID"

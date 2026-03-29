@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+OLD_ID=$1
+NEW_ID=$2
+
+# Input validation
+if [ -z "$OLD_ID" ] || [ -z "$NEW_ID" ]; then
+    echo "Usage: $0 <OLD_ID> <NEW_ID>"
+    exit 1
+fi
+
+# Validate that IDs are numeric
+if ! [[ "$OLD_ID" =~ ^[0-9]+$ ]] || ! [[ "$NEW_ID" =~ ^[0-9]+$ ]]; then
+    echo "Error: Both OLD_ID and NEW_ID must be numeric values."
+    exit 1
+fi
+
+# 1. Change the CAN ID from OLD_ID to NEW_ID
+candletool md can --new_id "$NEW_ID" --id "$OLD_ID"
+
+echo "Waiting..."
+sleep 5
+
+# 2. Save the new ID to flash memory
+candletool md save --id "$NEW_ID"
+
+echo "Successfully changed MD80 CAN ID from $OLD_ID to $NEW_ID"
