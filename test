@@ -1,0 +1,4 @@
+#!/bin/bash
+# Usage: ./test <id> <pos>
+
+candletool md test --id $1 absolute $2
